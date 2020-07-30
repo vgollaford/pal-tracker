@@ -29,10 +29,7 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository
         return timeEntries.get(id);
     }
 
-    @Override
-    public TimeEntry find(Long id) {
-        return null;
-    }
+
 
     @Override
     public List<TimeEntry> list()
@@ -63,13 +60,5 @@ public class InMemoryTimeEntryRepository implements TimeEntryRepository
         timeEntries.remove(id);
     }
 
-    @Override
-    public TimeEntry update(Long id, TimeEntry timeEntry) {
-        return null;
-    }
 
-    @Override
-    public void delete(Long id) {
-
-    }
 }
