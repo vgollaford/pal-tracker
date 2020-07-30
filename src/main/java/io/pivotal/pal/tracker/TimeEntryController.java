@@ -7,22 +7,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/time-entries")
 public class TimeEntryController
 {
-    private TimeEntryRepository timeEntriesRepo;
+    private TimeEntryRepository timeEntryRepository;
     private final DistributionSummary timeEntrySummary;
     private final Counter actionCounter;
 
     public TimeEntryController(
-            TimeEntryRepository timeEntriesRepo,
+            TimeEntryRepository timeEntryRepository,
             MeterRegistry meterRegistry
     ) {
-        this.timeEntriesRepo = timeEntriesRepo;
+        this.timeEntryRepository = timeEntryRepository;
 
         timeEntrySummary = meterRegistry.summary("timeEntry.summary");
         actionCounter = meterRegistry.counter("timeEntry.actionCounter");
@@ -30,16 +29,16 @@ public class TimeEntryController
 
     @PostMapping
     public ResponseEntity<TimeEntry> create(@RequestBody TimeEntry timeEntry) {
-            TimeEntry createdTimeEntry = timeEntriesRepo.create(timeEntry);
+            TimeEntry createdTimeEntry = timeEntryRepository.create(timeEntry);
         actionCounter.increment();
-        timeEntrySummary.record(timeEntriesRepo.list().size());
+        timeEntrySummary.record(timeEntryRepository.list().size());
 
                     return new ResponseEntity<>(createdTimeEntry, HttpStatus.CREATED);
         }
 
             @GetMapping("{id}")
             public ResponseEntity<TimeEntry> read(@PathVariable Long id) {
-            TimeEntry timeEntry = timeEntriesRepo.find(id);
+            TimeEntry timeEntry = timeEntryRepository.find(id);
             if (timeEntry != null)
             {
                 actionCounter.increment();
@@ -54,12 +53,12 @@ public class TimeEntryController
             public ResponseEntity<List<TimeEntry>> list()
             {
                 actionCounter.increment();
-            return new ResponseEntity<>(timeEntriesRepo.list(), HttpStatus.OK);
+            return new ResponseEntity<>(timeEntryRepository.list(), HttpStatus.OK);
             }
 
             @PutMapping("{id}")
             public ResponseEntity<TimeEntry> update(@PathVariable Long id, @RequestBody TimeEntry timeEntry) {
-            TimeEntry updatedTimeEntry = timeEntriesRepo.update(id, timeEntry);
+            TimeEntry updatedTimeEntry = timeEntryRepository.update(id, timeEntry);
             if (updatedTimeEntry != null) {
                 actionCounter.increment();
                     return new ResponseEntity<>(updatedTimeEntry, HttpStatus.OK);
@@ -71,9 +70,9 @@ public class TimeEntryController
             @DeleteMapping("{id}")
             public ResponseEntity delete(@PathVariable Long id)
             {
-            timeEntriesRepo.delete(id);
+                timeEntryRepository.delete(id);
                 actionCounter.increment();
-                timeEntrySummary.record(timeEntriesRepo.list().size());
+                timeEntrySummary.record(timeEntryRepository.list().size());
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
 
